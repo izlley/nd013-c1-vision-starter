@@ -138,23 +138,51 @@ Finally, you can create a video of your model's inferences for any tf record fil
 python inference_video.py --labelmap_path label_map.pbtxt --model_path experiments/reference/exported/saved_model --tf_record_path /data/waymo/testing/segment-12200383401366682847_2552_140_2572_140_with_camera_labels.tfrecord --config_path experiments/reference/pipeline_new.config --output_path animation.gif
 ```
 
-## Submission Template
+## Submission Writeup
 
 ### Project overview
-This section should contain a brief description of the project and what we are trying to achieve. Why is object detection such an important component of self driving car systems?
+
+In this project, I tried to train the object-detection model which supports self-driving car system for classifying objects given images from a camera. This model is an important component of self-driving car system because of keeping safety in self-driving and assisting lane keeping and etc.
 
 ### Set up
-This section should contain a brief description of the steps to follow to run the code for this repository.
+
+I followed the project instructions for using the project workspace.
+Some prerequisite libraries are needed.
+
+```
+$ pip install -t requirements.txt
+```
+
+Because the Firefox browser has cashed many times, I have installed and used the Chrome browser.
+
+```
+$ sudo apt-get update
+$ sudo apt-get install chromium-browser
+$ sudo chromium-browser --no-sandbox 
+```
 
 ### Dataset
 #### Dataset analysis
-This section should contain a quantitative and qualitative description of the dataset. It should include images, charts and other visualizations.
+
+The dataset presents most of the labels being associated with cars and pedestrians with the sample size of cyclists being very small. The proportionate amount of the counts of the different labels are in "Exploratory Data Analysis.ipynb" file. A sample image of the proportional counts of the labels (cars, pedestrians, cyclists) are shown in the notebook.
+
+<img src = "./eda.png" width="60%" height="60%">
+
 #### Cross validation
-This section should detail the cross validation strategy and justify your approach.
+We are using 9 : 1 as the proportion of training and validation data since we are using only 96 tfrecord samples. This ensures that we have sufficient data for training as well as validation.
+After the training is finished, we launch the evaluation process only one time. Because Launching evaluation process in parallel with training process will lead to OOM error in the workspace.
+
+<img src = "./loss.png">
 
 ### Training
 #### Reference experiment
-This section should detail the results of the reference experiment. It should includes training metrics and a detailed explanation of the algorithm's performances.
+* train_base/eval_base: The residual network model (Resnet) only with random_crop_image augmentation
 
 #### Improve on the reference
-This section should highlight the different strategies you adopted to improve your model. It should contain relevant figures and details of your findings.
+* train_exp1/eval_exp1: The residual network model (Resnet) with random_crop_image, random_rgb_to_gray, random_adjust_contrast and random_adjust_brightness augmentation
+* train_exp2/eval_exp2: The residual network model (Resnet) with random_crop_image augmentation and decreasing learning rate to 0.02
+
+The train_exp2 performed best. The pipeline changes are there in `pipeline_new_3.config`
+
+<img src = "./prec.png">
+<img src = "./rec.png">
