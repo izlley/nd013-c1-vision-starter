@@ -174,15 +174,27 @@ After the training is finished, we launch the evaluation process only one time. 
 
 <img src = "./loss.png">
 
+* the training loss is decreasing, hence the model is converging
+* the different metrics (AP50, mAP) are increasing with the default config, validation loss is much higher than training loss
+* the training loss has not reached a plateau and the model can be trained for more iterations.
+* It is a SSD model that generally overfits.
+
 ### Training
 #### Reference experiment
 * train_base/eval_base: The residual network model (Resnet) only with random_crop_image augmentation
 
+Though we added random_crop_image augmentation, the validation loss is much higher than training loss. It's because we use a SSD model that generally overfits. During training in the workspace the connection was often lost. So, the training has stopped before reaching plateau. The model can be trained for more iterations.
+
 #### Improve on the reference
 * train_exp1/eval_exp1: The residual network model (Resnet) with random_crop_image, random_rgb_to_gray, random_adjust_contrast and random_adjust_brightness augmentation
+
+We tried to improve the model performance by adding more augmentation methods. But it increased the total loss and decreased (AP,AR) performance.
+
 * train_exp2/eval_exp2: The residual network model (Resnet) with random_crop_image augmentation and decreasing learning rate to 0.02
 
-The train_exp2 performed best. The pipeline changes are there in `pipeline_new_3.config`
+Reducing the learning rate made a better results than previous experiments. It may help fine-tune the weights in the network for finding the global minimum.
+
+The train_exp2 performed best. The pipeline changes are there in `experiments/experiment1/pipeline_new_3.config`
 
 <img src = "./prec.png">
 <img src = "./rec.png">
